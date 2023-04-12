@@ -38,7 +38,8 @@ def signupHandler(user:NewUser):
 @app.post("/authenticate")
 def authHandler(credentials:UserAuthRequest):
     user = db.usersCreds.find_one({"username":credentials.username})
-    raise HTTPException(status_code=401, detail="Wrong password or user")
+    if(user == None):
+        raise HTTPException(status_code=401, detail="Wrong password or user")
     if bcrypt.checkpw(credentials.password.encode(), user["password"]):
         return {"jwt": jwt.encode({"Authenticated":True}, "secret", algorithm="HS256")}
     else:
